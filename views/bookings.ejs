@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= pageTitle %> | Car Rental</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>Quản lý booking</h1>
+    <nav>
+      <a href="/">Dashboard</a>
+      <a href="/cars">Cars</a>
+      <a href="/bookings" class="active">Bookings</a>
+    </nav>
+  </header>
+
+  <main class="container two-columns">
+    <section class="card">
+      <h2>Tạo booking</h2>
+      <% if (error) { %>
+        <p class="alert error"><%= error %></p>
+      <% } %>
+      <% if (success) { %>
+        <p class="alert success"><%= success %></p>
+      <% } %>
+
+      <form action="/bookings" method="POST" class="form-grid">
+        <label>Khách hàng
+          <input type="text" name="customerName" required />
+        </label>
+        <label>Xe
+          <select name="carNumber" required>
+            <% cars.forEach(car => { %>
+              <option value="<%= car.carNumber %>"><%= car.carNumber %> - <%= car.status %> - <%= car.pricePerDay %>/ngày</option>
+            <% }) %>
+          </select>
+        </label>
+        <label>Ngày bắt đầu
+          <input type="date" name="startDate" required />
+        </label>
+        <label>Ngày kết thúc (có thể để trống)
+          <input type="date" name="endDate" />
+        </label>
+        <button type="submit" class="btn full">Tạo booking</button>
+      </form>
+    </section>
+
+    <section class="card full-width">
+      <h2>Danh sách booking</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Khách hàng</th>
+              <th>Xe</th>
+              <th>Bắt đầu</th>
+              <th>Kết thúc</th>
+              <th>Tổng tiền</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (!bookings.length) { %>
+              <tr>
+                <td colspan="6" class="center">Không có booking</td>
+              </tr>
+            <% } %>
+            <% bookings.forEach(booking => { %>
+              <tr>
+                <td><%= booking.customerName %></td>
+                <td><%= booking.carNumber %></td>
+                <td><%= booking.startDate ? new Date(booking.startDate).toLocaleDateString('vi-VN') : '' %></td>
+                <td><%= booking.endDate ? new Date(booking.endDate).toLocaleDateString('vi-VN') : 'Đang mở' %></td>
+                <td><%= booking.totalAmount ?? '-' %></td>
+                <td>
+                  <details>
+                    <summary>Sửa</summary>
+                    <form action="/bookings/<%= booking._id %>/update" method="POST" class="inline-form">
+                      <input type="text" name="customerName" value="<%= booking.customerName %>" required />
+                      <select name="carNumber" required>
+                        <% cars.forEach(car => { %>
+                          <option value="<%= car.carNumber %>" <%= booking.carNumber === car.carNumber ? 'selected' : '' %>><%= car.carNumber %></option>
+                        <% }) %>
+                      </select>
+                      <input
+                        type="date"
+                        name="startDate"
+                        value="<%= booking.startDate ? new Date(booking.startDate).toISOString().split('T')[0] : '' %>"
+                        required
+                      />
+                      <input
+                        type="date"
+                        name="endDate"
+                        value="<%= booking.endDate ? new Date(booking.endDate).toISOString().split('T')[0] : '' %>"
+                      />
+                      <button class="btn small" type="submit">Lưu</button>
+                    </form>
+                  </details>
+                  <form action="/bookings/<%= booking._id %>/delete" method="POST" onsubmit="return confirm('Xoá booking này?');">
+                    <button class="btn danger small" type="submit">Xoá</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= pageTitle %> | Car Rental</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>Car Rental Management</h1>
+    <nav>
+      <a href="/">Dashboard</a>
+      <a href="/cars">Cars</a>
+      <a href="/bookings">Bookings</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="grid">
+      <article class="card">
+        <h3>Tổng số xe</h3>
+        <p class="metric"><%= carsCount %></p>
+      </article>
+      <article class="card">
+        <h3>Tổng số booking</h3>
+        <p class="metric"><%= bookingsCount %></p>
+      </article>
+      <article class="card">
+        <h3>Booking đang mở</h3>
+        <p class="metric"><%= openBookings %></p>
+      </article>
+      <article class="card warning">
+        <h3>Booking quá hạn (&gt;24h)</h3>
+        <p class="metric"><%= overdueBookings %></p>
+      </article>
+    </section>
+
+    <section class="card">
+      <h2>Điều hướng nhanh</h2>
+      <div class="actions">
+        <a class="btn" href="/cars">Quản lý xe</a>
+        <a class="btn" href="/bookings">Quản lý booking</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
