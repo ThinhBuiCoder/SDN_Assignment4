@@ -33,13 +33,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
-mongoose.connect("mongodb://127.0.0.1:27017/car_rental");
+mongoose.connect(process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/car_rental");
 
 app.use("/", uiRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/cars", carRoutes);
 
-app.listen(3000, () => {
-  console.log("Server running at http://localhost:3000");
-});
+if (process.env.VERCEL !== "1") {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
