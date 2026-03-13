@@ -1,0 +1,12 @@
+[
+  { "username": "admin01", "password": "Admin@123", "role": "admin", "isActive": true },
+  { "username": "admin02", "password": "Admin@234", "role": "admin", "isActive": true },
+  { "username": "staff01", "password": "Staff@123", "role": "staff", "isActive": true },
+  { "username": "staff02", "password": "Staff@234", "role": "staff", "isActive": true },
+  { "username": "staff03", "password": "Staff@345", "role": "staff", "isActive": true },
+  { "username": "staff04", "password": "Staff@456", "role": "staff", "isActive": true },
+  { "username": "staff05", "password": "Staff@567", "role": "staff", "isActive": false },
+  { "username": "staff06", "password": "Staff@678", "role": "staff", "isActive": true },
+  { "username": "staff07", "password": "Staff@789", "role": "staff", "isActive": true },
+  { "username": "staff08", "password": "Staff@890", "role": "staff", "isActive": false }
+]

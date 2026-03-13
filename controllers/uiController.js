@@ -9,6 +9,18 @@ function parseFeatures(featuresText = "") {
     .filter(Boolean);
 }
 
+function isValidCarNumber(carNumber = "") {
+  return /^(?:[1-9]\d)[A-Z]-\d{3}\.\d{2}$/.test(carNumber.trim());
+}
+
+function isValidCapacity(capacity) {
+  return [2, 5, 7].includes(Number(capacity));
+}
+
+function isValidPricePerDay(value) {
+  return Number(value) > 0;
+}
+
 function parseDate(value) {
   if (!value) return null;
   const date = new Date(value);
@@ -73,6 +85,18 @@ exports.createCarFromForm = async (req, res) => {
   try {
     const { carNumber, capacity, status, pricePerDay, features } = req.body;
 
+    if (!isValidCarNumber(carNumber)) {
+      return res.redirect("/cars?error=Biển số không hợp lệ. Ví dụ: 30A-123.45");
+    }
+
+    if (!isValidCapacity(capacity)) {
+      return res.redirect("/cars?error=Số ghế chỉ nhận 2, 5 hoặc 7");
+    }
+
+    if (!isValidPricePerDay(pricePerDay)) {
+      return res.redirect("/cars?error=Giá/ngày phải lớn hơn 0");
+    }
+
     await Car.create({
       carNumber,
       capacity: Number(capacity),
@@ -94,6 +118,14 @@ exports.updateCarFromForm = async (req, res) => {
   try {
     const { carNumber } = req.params;
     const { capacity, status, pricePerDay, features } = req.body;
+
+    if (!isValidCapacity(capacity)) {
+      return res.redirect("/cars?error=Số ghế chỉ nhận 2, 5 hoặc 7");
+    }
+
+    if (!isValidPricePerDay(pricePerDay)) {
+      return res.redirect("/cars?error=Giá/ngày phải lớn hơn 0");
+    }
 
     const updated = await Car.findOneAndUpdate(
       { carNumber },

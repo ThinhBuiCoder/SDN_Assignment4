@@ -30,11 +30,15 @@
         <p class="alert success"><%= success %></p>
       <% } %>
       <form action="/cars" method="POST" class="form-grid">
-        <label>Biển số
-          <input type="text" name="carNumber" required />
+        <label>Biển số (VD: 30A-123.45)
+          <input type="text" name="carNumber" pattern="^(?:[1-9]\\d)[A-Z]-\\d{3}\\.\\d{2}$" title="Định dạng: 30A-123.45" required />
         </label>
-        <label>Số chỗ
-          <input type="number" name="capacity" min="1" required />
+        <label>Số chỗ (2, 5, 7)
+          <select name="capacity" required>
+            <option value="2">2</option>
+            <option value="5">5</option>
+            <option value="7">7</option>
+          </select>
         </label>
         <label>Trạng thái
           <select name="status" required>
@@ -44,7 +48,7 @@
           </select>
         </label>
         <label>Giá/ngày
-          <input type="number" name="pricePerDay" min="0" required />
+          <input type="number" name="pricePerDay" min="1" required />
         </label>
         <label class="full">Tiện ích (cách nhau bằng dấu phẩy)
           <input type="text" name="features" placeholder="GPS, Camera, Bluetooth" />
