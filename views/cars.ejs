@@ -73,56 +73,45 @@
 
     <section class="card full-width">
       <h2>Danh sách xe</h2>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Biển số</th>
-              <th>Số chỗ</th>
-              <th>Trạng thái</th>
-              <th>Giá/ngày</th>
-              <th>Tiện ích</th>
-              <th>Hành động</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% if (!cars.length) { %>
-              <tr>
-                <td colspan="6" class="center">Không có dữ liệu xe</td>
-              </tr>
-            <% } %>
-            <% cars.forEach(car => { %>
-              <tr>
-                <td><%= car.carNumber %></td>
-                <td><%= car.capacity %></td>
-                <td>
-                  <span class="badge <%= car.status %>"><%= car.status %></span>
-                </td>
-                <td><%= car.pricePerDay %></td>
-                <td><%= (car.features || []).join(', ') %></td>
-                <td>
-                  <details>
-                    <summary>Sửa</summary>
-                    <form action="/cars/<%= car.carNumber %>/update" method="POST" class="inline-form">
-                      <input type="number" name="capacity" min="1" value="<%= car.capacity %>" required />
-                      <select name="status" required>
-                        <option value="available" <%= car.status === 'available' ? 'selected' : '' %>>available</option>
-                        <option value="rented" <%= car.status === 'rented' ? 'selected' : '' %>>rented</option>
-                        <option value="maintenance" <%= car.status === 'maintenance' ? 'selected' : '' %>>maintenance</option>
-                      </select>
-                      <input type="number" name="pricePerDay" min="0" value="<%= car.pricePerDay %>" required />
-                      <input type="text" name="features" value="<%= (car.features || []).join(', ') %>" />
-                      <button type="submit" class="btn small">Lưu</button>
-                    </form>
-                  </details>
-                  <form action="/cars/<%= car.carNumber %>/delete" method="POST" onsubmit="return confirm('Xoá xe này?');">
-                    <button class="btn danger small" type="submit">Xoá</button>
-                  </form>
-                </td>
-              </tr>
-            <% }) %>
-          </tbody>
-        </table>
+      <div class="car-grid">
+        <% if (!cars.length) { %>
+          <p class="center">Không có dữ liệu xe</p>
+        <% } %>
+        <% const carImages = [
+          "https://images.unsplash.com/photo-1493238792000-8113da705763?auto=format&fit=crop&w=900&q=80",
+          "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=900&q=80",
+          "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=900&q=80",
+          "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=900&q=80"
+        ]; %>
+        <% cars.forEach((car, index) => { %>
+          <div class="car-card">
+            <img src="<%= carImages[index % carImages.length] %>" alt="<%= car.carNumber %>" />
+            <div class="content">
+              <h4><%= car.carNumber %></h4>
+              <p class="muted">Số chỗ: <strong><%= car.capacity %></strong></p>
+              <p class="muted">Giá/ngày: <strong><%= car.pricePerDay.toLocaleString('vi-VN') %> ₫</strong></p>
+              <p class="muted">Trạng thái: <span class="badge <%= car.status %>"><%= car.status %></span></p>
+              <p class="muted">Tiện ích: <%= (car.features || []).join(', ') || 'Chưa cập nhật' %></p>
+              <details>
+                <summary>Sửa nhanh</summary>
+                <form action="/cars/<%= car.carNumber %>/update" method="POST" class="inline-form">
+                  <input type="number" name="capacity" min="1" value="<%= car.capacity %>" required />
+                  <select name="status" required>
+                    <option value="available" <%= car.status === 'available' ? 'selected' : '' %>>available</option>
+                    <option value="rented" <%= car.status === 'rented' ? 'selected' : '' %>>rented</option>
+                    <option value="maintenance" <%= car.status === 'maintenance' ? 'selected' : '' %>>maintenance</option>
+                  </select>
+                  <input type="number" name="pricePerDay" min="0" value="<%= car.pricePerDay %>" required />
+                  <input type="text" name="features" value="<%= (car.features || []).join(', ') %>" />
+                  <button type="submit" class="btn small">Lưu</button>
+                </form>
+              </details>
+              <form action="/cars/<%= car.carNumber %>/delete" method="POST" onsubmit="return confirm('Xoá xe này?');">
+                <button class="btn danger small" type="submit">Xoá</button>
+              </form>
+            </div>
+          </div>
+        <% }) %>
       </div>
     </section>
   </main>
