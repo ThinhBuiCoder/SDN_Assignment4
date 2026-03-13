@@ -15,4 +15,7 @@ router.post("/bookings", uiController.createBookingFromForm);
 router.post("/bookings/:id/update", uiController.updateBookingFromForm);
 router.post("/bookings/:id/delete", uiController.deleteBookingFromForm);
 
+router.get("/users", uiController.usersPage);
+router.post("/users/:id/toggle", uiController.toggleUserStatusFromForm);
+
 module.exports = router;

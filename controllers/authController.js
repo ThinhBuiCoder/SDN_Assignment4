@@ -46,7 +46,8 @@ exports.register = async (req, res) => {
       user: {
         id: user._id,
         username: user.username,
-        role: user.role
+        role: user.role,
+        isActive: user.isActive
       }
     });
   } catch (err) {
@@ -67,6 +68,10 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: "invalid credentials" });
     }
 
+    if (!user.isActive) {
+      return res.status(403).json({ message: "account is locked" });
+    }
+
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
       return res.status(401).json({ message: "invalid credentials" });
@@ -80,7 +85,8 @@ exports.login = async (req, res) => {
       user: {
         id: user._id,
         username: user.username,
-        role: user.role
+        role: user.role,
+        isActive: user.isActive
       }
     });
   } catch (err) {
@@ -92,4 +98,39 @@ exports.getMe = async (req, res) => {
   res.json({
     user: req.user
   });
+};
+
+exports.listUsers = async (req, res) => {
+  try {
+    const users = await User.find().sort({ createdAt: -1 });
+    res.json({ users });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.toggleUserStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "user not found" });
+    }
+
+    user.isActive = !user.isActive;
+    await user.save();
+
+    res.json({
+      message: "status updated",
+      user: {
+        id: user._id,
+        username: user.username,
+        role: user.role,
+        isActive: user.isActive
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };

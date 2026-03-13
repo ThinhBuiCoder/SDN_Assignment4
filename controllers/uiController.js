@@ -1,5 +1,6 @@
 const Car = require("../models/carModel");
 const Booking = require("../models/bookingModel");
+const User = require("../models/userModel");
 
 function parseFeatures(featuresText = "") {
   return featuresText
@@ -21,22 +22,32 @@ function calculateTotalAmount(startDate, endDate, pricePerDay) {
 }
 
 exports.dashboard = async (req, res) => {
-  const [carsCount, bookingsCount, openBookings, overdueBookings] = await Promise.all([
-    Car.countDocuments(),
-    Booking.countDocuments(),
-    Booking.countDocuments({ $or: [{ endDate: null }, { endDate: { $exists: false } }] }),
-    Booking.countDocuments({
-      startDate: { $lte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
-      $or: [{ endDate: null }, { endDate: { $exists: false } }]
-    })
-  ]);
+  const [carsCount, bookingsCount, openBookings, overdueBookings, completedBookings, totalRevenue] =
+    await Promise.all([
+      Car.countDocuments(),
+      Booking.countDocuments(),
+      Booking.countDocuments({ $or: [{ endDate: null }, { endDate: { $exists: false } }] }),
+      Booking.countDocuments({
+        startDate: { $lte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+        $or: [{ endDate: null }, { endDate: { $exists: false } }]
+      }),
+      Booking.countDocuments({ endDate: { $ne: null } }),
+      Booking.aggregate([
+        { $match: { totalAmount: { $ne: null } } },
+        { $group: { _id: null, total: { $sum: "$totalAmount" } } }
+      ])
+    ]);
+
+  const revenueValue = Array.isArray(totalRevenue) && totalRevenue.length ? totalRevenue[0].total : 0;
 
   res.render("index", {
     pageTitle: "Dashboard",
     carsCount,
     bookingsCount,
     openBookings,
-    overdueBookings
+    overdueBookings,
+    completedBookings,
+    revenueValue
   });
 };
 
@@ -126,13 +137,59 @@ exports.bookingsPage = async (req, res) => {
     Booking.find().sort({ createdAt: -1 })
   ]);
 
+  const totalRevenue = bookings.reduce((sum, booking) => sum + (booking.totalAmount || 0), 0);
+  const activeRevenue = bookings
+    .filter((booking) => !booking.endDate)
+    .reduce((sum, booking) => sum + (booking.totalAmount || 0), 0);
+
   res.render("bookings", {
     pageTitle: "Quản lý booking",
     cars,
     bookings,
     error: req.query.error || "",
-    success: req.query.success || ""
+    success: req.query.success || "",
+    revenue: {
+      total: totalRevenue,
+      active: activeRevenue
+    }
   });
+};
+
+exports.usersPage = async (req, res) => {
+  try {
+    const users = await User.find().sort({ createdAt: -1 });
+    res.render("users", {
+      pageTitle: "Quản lý tài khoản",
+      users,
+      error: req.query.error || "",
+      success: req.query.success || ""
+    });
+  } catch (err) {
+    res.render("users", {
+      pageTitle: "Quản lý tài khoản",
+      users: [],
+      error: err.message,
+      success: ""
+    });
+  }
+};
+
+exports.toggleUserStatusFromForm = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.redirect("/users?error=Không tìm thấy tài khoản");
+    }
+
+    user.isActive = !user.isActive;
+    await user.save();
+
+    res.redirect("/users?success=Cập nhật trạng thái thành công");
+  } catch (err) {
+    res.redirect(`/users?error=${encodeURIComponent(err.message)}`);
+  }
 };
 
 exports.createBookingFromForm = async (req, res) => {

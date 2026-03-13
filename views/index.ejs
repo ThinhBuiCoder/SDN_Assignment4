@@ -8,31 +8,65 @@
 </head>
 <body>
   <header class="topbar">
-    <h1>Car Rental Management</h1>
+    <div class="brand">
+      <h1>Car Rental Management</h1>
+      <p>Trung tâm vận hành &amp; báo cáo hệ thống</p>
+    </div>
     <nav>
-      <a href="/">Dashboard</a>
+      <a href="/" class="active">Dashboard</a>
       <a href="/cars">Cars</a>
       <a href="/bookings">Bookings</a>
+      <a href="/users">Users</a>
     </nav>
   </header>
 
   <main class="container">
+    <section class="hero">
+      <div>
+        <h2>Tổng quan vận hành</h2>
+        <p>Thống kê realtime về đội xe, booking và doanh thu. Theo dõi xe đang hoạt động và xử lý nhanh các booking quá hạn.</p>
+        <div class="actions">
+          <a class="btn" href="/cars">Quản lý xe</a>
+          <a class="btn ghost" href="/bookings">Quản lý booking</a>
+        </div>
+      </div>
+      <div class="hero-card">
+        <h3>Doanh thu tổng</h3>
+        <p class="metric"><%= revenueValue.toLocaleString('vi-VN') %> ₫</p>
+        <p class="muted">Tổng doanh thu từ booking đã hoàn tất</p>
+      </div>
+    </section>
+
     <section class="grid">
       <article class="card">
         <h3>Tổng số xe</h3>
         <p class="metric"><%= carsCount %></p>
+        <p class="muted">Số xe đang trong hệ thống</p>
       </article>
       <article class="card">
         <h3>Tổng số booking</h3>
         <p class="metric"><%= bookingsCount %></p>
+        <p class="muted">Toàn bộ booking đã tạo</p>
       </article>
       <article class="card">
         <h3>Booking đang mở</h3>
         <p class="metric"><%= openBookings %></p>
+        <p class="muted">Đang vận hành hoặc chưa trả xe</p>
       </article>
       <article class="card warning">
         <h3>Booking quá hạn (&gt;24h)</h3>
         <p class="metric"><%= overdueBookings %></p>
+        <p class="muted">Cần xử lý ngay</p>
+      </article>
+      <article class="card">
+        <h3>Booking đã hoàn tất</h3>
+        <p class="metric"><%= completedBookings %></p>
+        <p class="muted">Booking đã kết thúc</p>
+      </article>
+      <article class="card highlight">
+        <h3>Doanh thu tổng</h3>
+        <p class="metric"><%= revenueValue.toLocaleString('vi-VN') %> ₫</p>
+        <p class="muted">Cập nhật dựa trên tổng tiền booking</p>
       </article>
     </section>
 
@@ -41,6 +75,7 @@
       <div class="actions">
         <a class="btn" href="/cars">Quản lý xe</a>
         <a class="btn" href="/bookings">Quản lý booking</a>
+        <a class="btn" href="/users">Quản lý tài khoản</a>
       </div>
     </section>
   </main>

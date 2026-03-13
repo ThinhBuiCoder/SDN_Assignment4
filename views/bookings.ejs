@@ -8,15 +8,32 @@
 </head>
 <body>
   <header class="topbar">
-    <h1>Quản lý booking</h1>
+    <div class="brand">
+      <h1>Quản lý booking</h1>
+      <p>Kiểm soát hợp đồng thuê &amp; doanh thu</p>
+    </div>
     <nav>
       <a href="/">Dashboard</a>
       <a href="/cars">Cars</a>
       <a href="/bookings" class="active">Bookings</a>
+      <a href="/users">Users</a>
     </nav>
   </header>
 
   <main class="container two-columns">
+    <section class="card summary full-width">
+      <div>
+        <h2>Tổng doanh thu</h2>
+        <p class="metric"><%= revenue.total.toLocaleString('vi-VN') %> ₫</p>
+        <p class="muted">Từ tất cả booking</p>
+      </div>
+      <div>
+        <h2>Doanh thu booking mở</h2>
+        <p class="metric"><%= revenue.active.toLocaleString('vi-VN') %> ₫</p>
+        <p class="muted">Đang vận hành</p>
+      </div>
+    </section>
+
     <section class="card">
       <h2>Tạo booking</h2>
       <% if (error) { %>
